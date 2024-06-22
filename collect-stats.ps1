@@ -2,8 +2,7 @@ $date = Get-Date -Date "2023-01-01"
 
 $releases = Invoke-RestMethod https://api.github.com/repos/burmilla/os/releases
 $githubStats = @()
-$recentVersions = $releases | Where-Object {$_.published_at -gt $date}
-forEach($v in $recentVersions) {
+forEach($v in $releases) {
 	$iso = $v.assets | Where-Object {$_.name -like "*.iso" -and $_.name -notlike "*vmware*" -and $_.name -notlike "*proxmoxve*"}
 	$rootfs = $v.assets | Where-Object {$_.name -eq "rootfs.tar.gz"}
 	$githubStats += New-Object -TypeName PSObject -Property @{
@@ -22,8 +21,7 @@ $osStats | Select-Object last_updated,pull_count | Export-Csv DockerHubTotalPull
 
 $dockerHubStats = @()
 $osTagStats = Invoke-RestMethod "https://hub.docker.com/v2/repositories/burmilla/os/tags?page_size=100&page=1&ordering=last_updated"
-$recentOsStats = $osTagStats.results | Where-Object {$_.tag_last_pushed -gt $date}
-forEach($osTag in $recentOsStats) {
+forEach($osTag in $osTagStats.results) {
 	$dockerHubStats += New-Object -TypeName PSObject -Property @{
 		name = $osTag.name
 		releaseDate = $osTag.tag_last_pushed.ToString("yyyy-MM-dd")
