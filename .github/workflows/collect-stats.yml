@@ -16,6 +16,7 @@ jobs:
       - name: Run PowerShell Script
         run: |
           pwsh -File collect-stats.ps1
+          pwsh -File rancheros-stats.ps1
         shell: pwsh
 
       - name: Commit stats.csv
